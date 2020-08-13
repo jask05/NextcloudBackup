@@ -5,6 +5,19 @@
 
 # Release.txt
 
+## 2020/08/13 - v0.5
+- Adding getops
+    - Local or remote backup.
+    - Some help commands.
+- Changed name of the main script.
+
+## 2020/08/12 - v0.4
+- Copy backup to another location using rsync.
+    - Only with a public key (no password).
+- Separate functions in different files: functions/main.sh and functions/nextcloud.sh
+- Store logs in a log folder. Custom var.
+- Delete local backup folder if you choose send the backup to a remote machine.
+
 ## 2020/08/11 - v0.3
 - Change banner to a internal var.
 - Modify the way to do the backup. First is a full backup (data, config and db).
