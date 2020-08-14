@@ -52,6 +52,7 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 - [ ] General: merge rsync and log backup.
 - [ ] General: check if rsync is installed.
 - [ ] General: chmod and chown to logs folder.
+- [ ] Backup: clean mode: delete old backups. Custom.
 - [ ] Backup: move (or not) local backup folder.
 - [ ] Backup: differential and/or incremental (only data).
 - [ ] Backup: only db and config files.
