@@ -11,7 +11,7 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 
 # Release.txt
 
-## 2020/08/13 - v0.6
+## 2020/08/14 - v0.6
 - Creating "ideas" section.
 - Removing trash comments in the code.
 - Removing ssh key generator function. I need to improve it.
