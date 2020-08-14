@@ -4,8 +4,10 @@
 # IMPORTANT
 - The script **only works** if you installed Nextcloud with snap.
 - You need to generate a ssh key to send the backup throught rsync.
->> ssh-keygen
->> ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an example.
+```bash
+ssh-keygen
+ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an example.
+```
 
 # Release.txt
 
