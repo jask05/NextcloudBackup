@@ -15,18 +15,6 @@ EOF
 echo -e " Version: ${VERSION}\n"
 }
 
-
-# CHECKANDSENDKEY
-# Check if RSA key does not exist 
-# and send it to the remote host
-CHECKANDSENDKEY () {
-    if [ ! -f "$IDRSA" ]
-    then
-        ssh-keygen
-        ssh-copy-id -i ${IDRSA} ${REMOTEUSER}@${REMOTEHOST}
-    fi
-}
-
 # MESSAGELOG function
 # Param 1 => message type: info, warn, error, verbose
 # Param 2 => text
@@ -86,11 +74,6 @@ CHECKROOTUSER () {
     fi
 }
 
-CHECKSWINSTALLED() {
-    # check if rsync exists
-    exit 0
-}
-
 # Checking if backup folder exists
 CHECKBACKUPFOLDER () {
     if [ -d $BACKUPSTORAGEFOLDER ]
@@ -134,16 +117,18 @@ CHECKREMOTEPARAMETERS () {
     fi
 }
 
+# SENDBACKUPRSYNC
+# Send created backup to a remote server
 SENDBACKUPRSYNC () {
-    rsync -a --no-motd --compress --log-file="${LOGFOLDER}/rsync.log" -e "ssh -o StrictHostKeyChecking=no -i ${IDRSA}" ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDFILENAME} ${REMOTEUSER}@${REMOTEHOST}:${REMOTESTORAGEFOLDER}
+    rsync -a --no-motd --compress --log-file="${LOGFOLDER}/${RSYNCLOG}" -e "ssh -o StrictHostKeyChecking=no -i ${IDRSA}" ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME} ${REMOTEUSER}@${REMOTEHOST}:${REMOTESTORAGEFOLDER}
     if [ $? = 0 ]
     then
         echo -e $(MESSAGELOG "success" "Nextcloud backup sended correctly.")
-        echo -e $(MESSAGELOG "info" "Remote host: \"${REMOTEHOST}\". Remote folder: \"${REMOTESTORAGEFOLDER}${NC_EXPORTEDFILENAME}\"")
+        echo -e $(MESSAGELOG "info" "Remote host: \"${REMOTEHOST}\". Remote folder: \"${REMOTESTORAGEFOLDER}${NC_EXPORTEDBACKUPFILENAME}\"")
 
         # Delete local backup folder
         echo -e $(MESSAGELOG "info" "Deleting local backup folder.")
-        rm -rf ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDFILENAME}
+        rm -rf ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}
         if [ $? -eq 0 ]
         then
             echo -e $(MESSAGELOG "success" "Local backup folder was deleted correctly.")
@@ -163,12 +148,11 @@ SENDBACKUPRSYNC () {
 
 SHOWHELP () {
 cat << EOF  
-Usage: ./nextbackup.sh [OPTION]...
+Usage: $0 [OPTION]... [VALUE]...
 Create a local o remote Nextcloud backup (only snap installation)
     -h, -help,          --help                  Display help
     -v, -version,       --version               Set and Download specific version of EspoCRM
     -b, -backup-mode,   --backup-mode           Specify backup mode: local or remote
-    -V, -verbose,       --verbose               Run script in verbose mode. Will print out each step of execution.
 EOF
 }
 

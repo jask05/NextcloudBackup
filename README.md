@@ -1,9 +1,18 @@
 # NextcloudBackup
-> Scripts that make a backup of Nextcloud data, config and DB. You can send it throught rsync.
+> Scripts that make a backup of Nextcloud data, config and DB. You can send it throught rsync or keep it in a local folder.
 
-**IMPORTANT**: only backup if you installed it with snap.
+# IMPORTANT
+- The script **only works** if you installed Nextcloud with snap.
+- You need to generate a ssh key to send the backup throught rsync.
+>> ssh-keygen
+>> ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an example.
 
 # Release.txt
+
+## 2020/08/13 - v0.6
+- Creating "ideas" section.
+- Removing trash comments in the code.
+- Removing ssh key generator function. I need to improve it.
 
 ## 2020/08/13 - v0.5
 - Adding getops
@@ -33,4 +42,19 @@
 - Starting script.
 - Adding external banner.
 
-
+# Ideas
+- [ ] General: Telegram notification.
+- [ ] General: silent mode.
+- [ ] General: Github Wiki.
+- [ ] General: verbose mode.
+- [ ] General: merge rsync and log backup.
+- [ ] General: check if rsync is installed.
+- [ ] General: chmod and chown to logs folder.
+- [ ] Backup: move (or not) local backup folder.
+- [ ] Backup: differential and/or incremental (only data).
+- [ ] Backup: only db and config files.
+- [ ] Backup: Compress db and config files.
+- [ ] Backup: also backup no snap installations.
+- [ ] Backup: custom backup name (source and target).
+- [ ] Sync: allow to send the backup through (s)ftp.
+- [ ] Sync: choose between key or pass.

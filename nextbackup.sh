@@ -1,30 +1,14 @@
 #!/usr/bin/env bash
-
-################################## CAMBIOS #################################
-#
-# 1. echo por printf => https://unix.stackexchange.com/questions/65803/why-is-printf-better-than-echo
-# 2.¿QUIET mode?
-# 3. ¿Poner mensajes programas customizados para saber que no son mios?
-#
-#
-#############################################################################
-
-#################################### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
-# CLEAN
-sudo rm -rf /var/snap/nextcloud/common/backups/* /home/test/nextcloudbackup/* /home/testrsync/2020* /home/test/scripts/NextcloudBackup/logs
-#################################### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
-
 # Make Nextcloud Backup: DB, config folder and data
 
 # Main config. NOT TOUCH !!!
 TIMESTAMP=$(date +"%Y-%m-%d %T")
 CLEANTIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-BACKUPTYPE=${1:-"Local"} # Local (default) or Remote
 SCRIPTDIR=$(dirname "$0")
-VERSION="0.5"
+VERSION="0.6"
 
 # RSYNC parameters
-IDRSA="/home/test/.ssh/id_rsa"
+IDRSA="/home/${SUDO_USER}/.ssh/id_rsa"
 REMOTEUSER="testrsync"
 REMOTEHOST="127.0.0.1"
 REMOTESTORAGEFOLDER="/home/testrsync/"
@@ -35,27 +19,23 @@ BACKUPSTORAGEFOLDER="/home/test/nextcloudbackup"
 PREFIXBACKUPLOG="nextcloudbackup"
 SUFIXBACKUPLOG="${CLEANTIMESTAMP}.log"
 BACKUPLOG="${PREFIXBACKUPLOG}_${SUFIXBACKUPLOG}"
+RSYNCLOG="rsync.log"
 
 # Functions
 . "${SCRIPTDIR}/functions/main.sh"
 . "${SCRIPTDIR}/functions/nextcloud.sh"
 
-# Telegram notification
-# Coming soon
-
 # Wellcome banner
 WELLCOMEBANNER
 
-# >>>>>>>>>>>>>>>>>>>>> Solo si se escogió backup remoto
-# CHECKANDSENDKEY
-
+# Script options
 # $@ is all command line parameters passed to the script.
 # -o is for short options like -v
 # -l is for long options with double dash like --version
 # the comma separates different long options
 # -a is for long options with single dash like -version
 # options=$(getopt -l "help,version:,verbose,rebuild,dryrun" -o "hv:Vrd" -a -- "$@")
-options=$(getopt -l "help,version,verbose,backup-mode" -o "hvVb:" -a -- "$@")
+options=$(getopt --long "help,version,backup-mode:" -o "hvb:" -a -- "$@")
 
 # set --:
 # If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters 
@@ -69,8 +49,9 @@ case $1 in
     BACKUPTYPE=$2
     if [ "$BACKUPTYPE" = "local" ] || [ "$BACKUPTYPE" = "remote" ]
     then
+        echo -e $(MESSAGELOG "info" "Starting full Nextcloud backup." True)
+        # Check if user run the script with sudo
         CHECKROOTUSER
-        echo -e $(MESSAGELOG "info" "Starting backup." True)
 
         # Create log folder
         CHECKLOGFOLDER
@@ -81,22 +62,17 @@ case $1 in
         # Enabling maintenance mode
         NC_MAINTENANCEMODE "enable"
 
-        # Backup: config file and DB
-        # Coming soon
-
         # Full backup
         echo -e $(MESSAGELOG "info" "Creating a full Nextcloud backup (data, db and config).")
         NC_FULLBACKUP
 
         # NextCloud variables
-        # >> MEJORAR VARIABLES
-        NC_EXPORTEDFULLPATH=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}')
-        NC_EXPORTEDFILENAME=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk -F/ '{print $7}')
-        NC_EXPORTEDFOLDERNAME=$(dirname $(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}'))
+        NC_EXPORTEDBACKUPFULLPATH=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}')
+        NC_EXPORTEDBACKUPFILENAME=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk -F/ '{print $7}')
+        NC_EXPORTEDBACKUPFOLDERNAME=$(dirname $(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}'))
 
-        # Move backup to a specific folder
-        # >>>>>>>>>>>> ¿Es necesario moverlo cuando es un full backup?
-        echo -e $(MESSAGELOG "info" "Moving Nextcloud backup under \"${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDFILENAME}\"")
+        # Move backup to a specific folder (optional)
+        echo -e $(MESSAGELOG "info" "Moving Nextcloud backup under \"${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}\"")
         NC_MOVEBACKUP
         echo -e $(MESSAGELOG "info" "Backup size: $(NC_BACKUPSIZE)")
 
@@ -125,6 +101,10 @@ case $1 in
 -V|--verbose)
     echo "coming soon"
     set -xv  # Set xtrace and verbose mode.
+    ;;
+*) 
+    SHOWHELP
+    exit 0
     ;;
 --)
     shift
