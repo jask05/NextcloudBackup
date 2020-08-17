@@ -55,7 +55,7 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 - [ ] General: verbose mode.
 - [ ] General: merge rsync and log backup.
 - [ ] General: check if rsync is installed.
-- [x] General: chown logs folder.
+- [x] General: chown logs folder. (2020/08/17) :heavy_check_mark:
 - [ ] General: check updates.
 - [ ] Backup: clean mode: delete old backups. Custom.
 - [ ] Backup: move (or not) local backup folder.

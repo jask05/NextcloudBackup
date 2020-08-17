@@ -21,7 +21,7 @@ NC_MAINTENANCEMODE () {
 }
 
 NC_DBCONFIGBACKUP () {
-    sudo nextcloud.export -abcd >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
+    sudo nextcloud.export -abc >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     if [ $? != 0 ]
     then
         echo -e $(MESSAGELOG "error" "A problem occurs creating a Nextcloud database and config backup. Please check backup command.")
@@ -32,7 +32,6 @@ NC_DBCONFIGBACKUP () {
 }
 
 NC_DATABACKUP () {
-    # rsync -azP --delete ${NC_DATADIR} ${NC_EXPORTEDBACKUPFOLDERNAME}
     rsync -azP --delete ${NC_DATADIR} ${NC_EXPORTEDBACKUPFOLDERNAME} >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     if [ $? != 0 ]
     then
