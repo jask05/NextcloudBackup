@@ -20,38 +20,33 @@ NC_MAINTENANCEMODE () {
     fi
 }
 
-NC_FULLBACKUP () {
+NC_DBCONFIGBACKUP () {
     sudo nextcloud.export -abcd >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     if [ $? != 0 ]
     then
-        echo -e $(MESSAGELOG "error" "A problem occurs creating a full Nextcloud backup. Please check backup command.")
+        echo -e $(MESSAGELOG "error" "A problem occurs creating a Nextcloud database and config backup. Please check backup command.")
         exit 1
     else
-        echo -e $(MESSAGELOG "success" "Nextcloud full backup created correctly.")
+        echo -e $(MESSAGELOG "success" "Nextcloud database and config backup created correctly.")
     fi
 }
 
-# NC_BACKUPDBANDCONFIG () {
-#     sudo nextcloud.export -abc | tee backup.log # note: export to a var https://stackoverflow.com/questions/10319745/redirecting-command-output-to-a-variable-in-bash-fails
-#     if [ $? != 0 ]
-#     then
-#         echo -e $(MESSAGELOG "error" "A problem occurs creating backup (DB and Config). Please check Nextcloud export command.")
-#         exit 1
-#     fi
-# }
-
-# NC_BACKUPDATA () {
-#     sudo nextcloud.export -d | tee databackup.log # ¿se puede exportar a una variable?
-#     if [ $? != 0 ]
-#     then
-#         echo -e $(MESSAGELOG "error" "A problem occurs creating data backup. Please check backup command.")
-#         exit 1
-#     fi
-# }
+NC_DATABACKUP () {
+    # rsync -azP --delete ${NC_DATADIR} ${NC_EXPORTEDBACKUPFOLDERNAME}
+    rsync -azP --delete ${NC_DATADIR} ${NC_EXPORTEDBACKUPFOLDERNAME} >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
+    if [ $? != 0 ]
+    then
+        echo -e $(MESSAGELOG "error" "A problem occurs creating a Nextcloud data backup. Please check backup command.")
+        exit 1
+    else
+        echo -e $(MESSAGELOG "success" "Nextcloud data backup created correctly.")
+    fi
+}
 
 NC_MOVEBACKUP () {
     sudo mv -f "${NC_EXPORTEDBACKUPFULLPATH}" "${BACKUPSTORAGEFOLDER}"
-    sudo chown -R $(whoami):$(whoami) "${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}"
+    # sudo chown -R $(whoami):$(whoami) "${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}"
+    sudo chown -R $SUDO_USER:$SUDO_USER "${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}"
 }
 
 NC_BACKUPSIZE () {

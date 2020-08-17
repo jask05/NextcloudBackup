@@ -13,7 +13,6 @@ cat << "EOF"
                                                                           | |    
                                                                           |_|    
                
-   
 EOF
 echo -e " Version: ${VERSION}\n"
 }
@@ -85,6 +84,7 @@ CHECKBACKUPFOLDER () {
     else
         echo -e $(MESSAGELOG "warn" "Backup folder does not exist. Trying to create it...")
         mkdir -p $BACKUPSTORAGEFOLDER
+        chown $SUDO_USER:$SUDO_USER $BACKUPSTORAGEFOLDER
         if [ $? -eq 0 ]
         then
             echo -e $(MESSAGELOG "success" "Backup folder was created correctly.")
@@ -102,6 +102,7 @@ CHECKLOGFOLDER () {
     else
         echo -e $(MESSAGELOG "warn" "Log folder does not exist. Trying to create it...")
         mkdir -p $LOGFOLDER
+        sudo chown $SUDO_USER:$SUDO_USER ${LOGFOLDER}
         if [ $? -eq 0 ]
         then
             echo -e $(MESSAGELOG "success" "Log folder was created correctly.")
@@ -154,7 +155,7 @@ cat << EOF
 Usage: $0 [OPTION]... [VALUE]...
 Create a local o remote Nextcloud backup (only snap installation)
     -h, -help,          --help                  Display help
-    -v, -version,       --version               Set and Download specific version of EspoCRM
+    -v, -version,       --version               Show script version
     -b, -backup-mode,   --backup-mode           Specify backup mode: local or remote
 EOF
 }

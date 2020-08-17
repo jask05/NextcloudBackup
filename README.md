@@ -11,6 +11,10 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 
 # Release.txt
 
+## 2020/07/18 - v0.7
+- Separate data and config & db backup.
+    - If data is located under a custom folder, backup command does not work properly.
+
 ## 2020/08/14 - v0.6
 - Creating "ideas" section.
 - Removing trash comments in the code.
@@ -52,6 +56,7 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 - [ ] General: merge rsync and log backup.
 - [ ] General: check if rsync is installed.
 - [ ] General: chmod and chown to logs folder.
+- [ ] General: check updates.
 - [ ] Backup: move (or not) local backup folder.
 - [ ] Backup: differential and/or incremental (only data).
 - [ ] Backup: only db and config files.

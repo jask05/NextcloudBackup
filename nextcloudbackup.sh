@@ -5,7 +5,7 @@
 TIMESTAMP=$(date +"%Y-%m-%d %T")
 CLEANTIMESTAMP=$(date +"%Y%m%d-%H%M%S")
 SCRIPTDIR=$(dirname "$0")
-VERSION="0.6"
+VERSION="0.7"
 
 # RSYNC parameters
 IDRSA="/home/${SUDO_USER}/.ssh/id_rsa"
@@ -15,7 +15,7 @@ REMOTESTORAGEFOLDER="/home/testrsync/"
 
 # Custom config
 LOGFOLDER="${SCRIPTDIR}/logs"
-BACKUPSTORAGEFOLDER="/home/test/nextcloudbackup"
+BACKUPSTORAGEFOLDER="/home/${SUDO_USER}/nextcloudbackup"
 PREFIXBACKUPLOG="nextcloudbackup"
 SUFIXBACKUPLOG="${CLEANTIMESTAMP}.log"
 BACKUPLOG="${PREFIXBACKUPLOG}_${SUFIXBACKUPLOG}"
@@ -63,13 +63,17 @@ case $1 in
         NC_MAINTENANCEMODE "enable"
 
         # Full backup
-        echo -e $(MESSAGELOG "info" "Creating a full Nextcloud backup (data, db and config).")
-        NC_FULLBACKUP
+        echo -e $(MESSAGELOG "info" "Creating Nextcloud database and config backup.")
+        NC_DBCONFIGBACKUP
 
         # NextCloud variables
+        NC_DATADIR=$(sudo grep "datadirectory" /var/snap/nextcloud/current/nextcloud/config/config.php  | awk '{print $3}' | tr -d "\',")
         NC_EXPORTEDBACKUPFULLPATH=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}')
         NC_EXPORTEDBACKUPFILENAME=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk -F/ '{print $7}')
         NC_EXPORTEDBACKUPFOLDERNAME=$(dirname $(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}'))
+
+        echo -e $(MESSAGELOG "info" "Creating Nextcloud data backup.")
+        NC_DATABACKUP
 
         # Move backup to a specific folder (optional)
         echo -e $(MESSAGELOG "info" "Moving Nextcloud backup under \"${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}\"")
@@ -83,7 +87,7 @@ case $1 in
             SENDBACKUPRSYNC
         fi
 
-        NC_MAINTENANCEMODE "disable"
+        NC_MAINTENANCEMODE "disable" 
     else
         echo -e $(MESSAGELOG "error" "This argument only works with 'local' or 'remote' values.")
     fi
