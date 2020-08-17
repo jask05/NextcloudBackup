@@ -57,7 +57,7 @@ case $1 in
         CHECKLOGFOLDER
 
         # Deleting old logs
-        REMOVEBACKUPLOG
+        # REMOVEBACKUPLOG # OPTIONAL
 
         # Enabling maintenance mode
         NC_MAINTENANCEMODE "enable"
@@ -72,12 +72,15 @@ case $1 in
         NC_EXPORTEDBACKUPFILENAME=$(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk -F/ '{print $7}')
         NC_EXPORTEDBACKUPFOLDERNAME=$(dirname $(grep "Successfully exported" ${LOGFOLDER}/${BACKUPLOG} | awk '{print $3}'))
 
-        echo -e $(MESSAGELOG "info" "Creating Nextcloud data backup.")
-        NC_DATABACKUP
-
         # Move backup to a specific folder (optional)
         echo -e $(MESSAGELOG "info" "Moving Nextcloud backup under \"${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}\"")
         NC_MOVEBACKUP
+        
+        # Re-enable maintenance mode for data backup
+        NC_MAINTENANCEMODE "enable"
+        echo -e $(MESSAGELOG "info" "Creating Nextcloud data backup.")
+        NC_DATABACKUP
+
         echo -e $(MESSAGELOG "info" "Backup size: $(NC_BACKUPSIZE)")
 
         # Remote storage

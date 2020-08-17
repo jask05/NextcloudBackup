@@ -124,6 +124,7 @@ CHECKREMOTEPARAMETERS () {
 # SENDBACKUPRSYNC
 # Send created backup to a remote server
 SENDBACKUPRSYNC () {
+    echo "rsync -a --no-motd --compress --log-file=\"${LOGFOLDER}/${RSYNCLOG}\" -e \"ssh -o StrictHostKeyChecking=no -i ${IDRSA}\" ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME} ${REMOTEUSER}@${REMOTEHOST}:${REMOTESTORAGEFOLDER}\"" >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     rsync -a --no-motd --compress --log-file="${LOGFOLDER}/${RSYNCLOG}" -e "ssh -o StrictHostKeyChecking=no -i ${IDRSA}" ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME} ${REMOTEUSER}@${REMOTEHOST}:${REMOTESTORAGEFOLDER}
     if [ $? = 0 ]
     then
@@ -132,6 +133,7 @@ SENDBACKUPRSYNC () {
 
         # Delete local backup folder
         echo -e $(MESSAGELOG "info" "Deleting local backup folder.")
+        echo "rm -rf ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}" >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
         rm -rf ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}
         if [ $? -eq 0 ]
         then

@@ -48,7 +48,7 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 - Starting script.
 - Adding external banner.
 
-# Ideas
+# Tasks lists
 - [ ] General: Telegram notification.
 - [ ] General: silent mode.
 - [ ] General: Github Wiki.
@@ -57,6 +57,7 @@ ssh-copy-id -i /home/example/.ssh/id_rsa targetuser@192.168.1.2 # It's an exampl
 - [ ] General: check if rsync is installed.
 - [x] General: chown logs folder. (2020/08/17) :heavy_check_mark:
 - [ ] General: check updates.
+- [ ] Backup: check if another RSYNC is running.
 - [ ] Backup: clean mode: delete old backups. Custom.
 - [ ] Backup: move (or not) local backup folder.
 - [ ] Backup: differential and/or incremental (only data).

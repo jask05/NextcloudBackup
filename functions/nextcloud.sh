@@ -21,6 +21,7 @@ NC_MAINTENANCEMODE () {
 }
 
 NC_DBCONFIGBACKUP () {
+    echo "sudo nextcloud.export -abc" >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     sudo nextcloud.export -abc >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     if [ $? != 0 ]
     then
@@ -32,7 +33,8 @@ NC_DBCONFIGBACKUP () {
 }
 
 NC_DATABACKUP () {
-    rsync -azP --delete ${NC_DATADIR} ${NC_EXPORTEDBACKUPFOLDERNAME} >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
+    echo "sudo rsync -azP --delete $NC_DATADIR ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}" >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
+    sudo rsync -azP --delete ${NC_DATADIR} ${NC_EXPORTEDBACKUPFOLDERNAME} >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     if [ $? != 0 ]
     then
         echo -e $(MESSAGELOG "error" "A problem occurs creating a Nextcloud data backup. Please check backup command.")
@@ -43,8 +45,9 @@ NC_DATABACKUP () {
 }
 
 NC_MOVEBACKUP () {
+    echo "sudo mv -f ${NC_EXPORTEDBACKUPFULLPATH} ${BACKUPSTORAGEFOLDER}" >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     sudo mv -f "${NC_EXPORTEDBACKUPFULLPATH}" "${BACKUPSTORAGEFOLDER}"
-    # sudo chown -R $(whoami):$(whoami) "${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}"
+    echo "sudo chown -R $SUDO_USER:$SUDO_USER ${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}" >> ${LOGFOLDER}/${BACKUPLOG} 2>&1
     sudo chown -R $SUDO_USER:$SUDO_USER "${BACKUPSTORAGEFOLDER}/${NC_EXPORTEDBACKUPFILENAME}"
 }
 
